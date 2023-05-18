@@ -37,5 +37,19 @@ def predict_api():
     return predicted_class
 
 
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = [float(x) for x in request.form.values()]
+    new_data = np.array(data)
+    new_data = new_data.reshape(1, -1)
+    transformed_data = scaler.transform(new_data)
+    predicted = ml_model.predict(transformed_data)
+    predicted_class = None
+    if predicted == 0:
+        predicted_class = 'Benign'
+    if predicted == 1:
+        predicted_class = 'Malignant'
+    return render_template("home.html", prediction_text = "Your cancer class is {}".format(predicted_class))
+
 if __name__=="__main__":
     app.run(debug=True)
